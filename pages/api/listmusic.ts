@@ -15,9 +15,11 @@ export default async function handler(
     range: 'Página1', // Nome da sua aba
   });
 
-  const rows = response.data.values;
+  
+
+  const rows: any  = response.data.values;
   if (rows.length) {
-    const musicList = rows.map((row) => ({
+    const musicList = rows.map((row : any) => ({
       ID: row[0],
       Artista: row[2],
       Titulo: row[1],

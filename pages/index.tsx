@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Page() {
-  const [posts, setPosts] = useState([]);
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(10); // Altere este valor para o número de posts que você quer por página
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [posts, setPosts] : any = useState([]);
+  const [search, setSearch] : any = useState('');
+  const [loading, setLoading] : any = useState(true);
+  const [currentPage, setCurrentPage] : any = useState(1);
+  const [postsPerPage, setPostsPerPage] : any = useState(10); // Altere este valor para o número de posts que você quer por página
+  const [filteredPosts, setFilteredPosts] : any = useState([]);
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -30,7 +30,7 @@ export default function Page() {
 
   useEffect(() => {
     setFilteredPosts(
-      posts.filter(post =>
+      posts.filter((post: { ID: string; Titulo: string; Artista: string; }) =>
         post.ID.toLowerCase().includes(search.toLowerCase()) ||
         post.Titulo.toLowerCase().includes(search.toLowerCase()) ||
         post.Artista.toLowerCase().includes(search.toLowerCase()) ||
@@ -66,7 +66,7 @@ export default function Page() {
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   // Mudar página
-  const paginate = pageNumber => setCurrentPage(pageNumber);
+  const paginate : any = (pageNumber: number) => setCurrentPage(pageNumber);
 
 
 
@@ -93,7 +93,7 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {Array(5).fill().map((_, index) => (
+              {Array(5).fill(0).map((_, index) => (
                 <tr key={index}>
                   <td className="placeholder-glow">
                     <span className="placeholder col-6"></span>
@@ -120,7 +120,7 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {currentPosts.map(post => (
+              {currentPosts.map((post: { ID: string; Titulo: string; Artista: string; }) => (
                 <tr key={post.ID}>
                   <td>{post.ID}</td>
                   <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Titulo}>{post.Titulo}</td>
@@ -137,7 +137,7 @@ export default function Page() {
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
-                {Array(Math.ceil(filteredPosts.length / postsPerPage)).fill().map((_, index) => (
+                {Array(Math.ceil(filteredPosts.length / postsPerPage)).fill(0).map((_, index) => (
                   <li key={index} className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}>
                     <a onClick={() => paginate(index + 1)} className="page-link">
                       {index + 1}
