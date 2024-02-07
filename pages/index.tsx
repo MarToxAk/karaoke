@@ -2,12 +2,30 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Page() {
-  const [posts, setPosts] : any = useState([]);
-  const [search, setSearch] : any = useState('');
-  const [loading, setLoading] : any = useState(true);
-  const [currentPage, setCurrentPage] : any = useState(1);
-  const [postsPerPage, setPostsPerPage] : any = useState(10); // Altere este valor para o número de posts que você quer por página
-  const [filteredPosts, setFilteredPosts] : any = useState([]);
+  const [posts, setPosts]: any = useState([]);
+  const [search, setSearch]: any = useState('');
+  const [loading, setLoading]: any = useState(true);
+  const [currentPage, setCurrentPage]: any = useState(1);
+  const [postsPerPage, setPostsPerPage]: any = useState(10); // Altere este valor para o número de posts que você quer por página
+  const [filteredPosts, setFilteredPosts]: any = useState([]);
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+
+  const getPages = () => {
+    const pages = []
+    const halfDisplayedPages = Math.floor(5 / 2)
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (currentPage >= i - halfDisplayedPages && currentPage <= i + halfDisplayedPages)
+      ) {
+        pages.push(i)
+      }
+    }
+
+    return pages
+  }
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -66,7 +84,7 @@ export default function Page() {
   const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
   // Mudar página
-  const paginate : any = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate: any = (pageNumber: number) => setCurrentPage(pageNumber);
 
 
 
@@ -137,11 +155,9 @@ export default function Page() {
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
-                {Array(Math.ceil(filteredPosts.length / postsPerPage)).fill(0).map((_, index) => (
-                  <li key={index} className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}>
-                    <a onClick={() => paginate(index + 1)} className="page-link">
-                      {index + 1}
-                    </a>
+                {getPages().map((page: number, index: number) => (
+                  <li key={index} className={`page-item ${page === currentPage ? 'active' : ''}`}>
+                    <a className="page-link" onClick={() => setCurrentPage(page)}>{page}</a>
                   </li>
                 ))}
                 <li className="page-item">
