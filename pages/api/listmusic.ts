@@ -9,17 +9,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  const sheets = google.sheets({ version: 'v4', auth: 'AIzaSyDIWr0vlKpUXJbAHnYEid5NOOiWsiZilRE' });
+  const sheets = google.sheets({ version: 'v4', auth: 'AIzaSyAtgmQ8aTQgn-qG2hIUqZak5evU6V3FXME' });
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: '1KPMD8qpPM3ZYwspBI-1YQP2jqyFM_wp2EgDz6IyxwBM',
-    range: 'Página1', // Nome da sua aba
+    spreadsheetId: '1aw0lt03AJCUsYLEej6_F417k0zoZwvRTjoqbrJ0KMGk',
+    range: 'Músicas', // Nome da sua aba
   });
 
   
 
   const rows: any  = response.data.values;
   if (rows.length) {
-    const musicList = rows.map((row : any) => ({
+    const musicList = rows.slice(1).map((row : any) => ({
       ID: row[0],
       Artista: row[2],
       Titulo: row[1],
