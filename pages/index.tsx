@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col, Modal } from 'react-bootstrap';
+import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 export default function Page() {
   const [posts, setPosts]: any = useState([]);
@@ -9,6 +11,53 @@ export default function Page() {
   const [postsPerPage, setPostsPerPage]: any = useState(10); // Altere este valor para o número de posts que você quer por página
   const [filteredPosts, setFilteredPosts]: any = useState([]);
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortDirection, setSortDirection] = useState(true); // true para crescente, false para decrescente
+  const [showModal, setShowModal] = useState(false);
+  const [currentPostId, setCurrentPostId]: any = useState([]);
+  const [currentLink, setCurrentLink]: any = useState(null);
+
+
+  const sortPosts = (column: any) => {
+    const newDirection = column === sortColumn ? !sortDirection : true;
+    setSortColumn(column);
+    setSortDirection(newDirection);
+
+    setFilteredPosts(filteredPosts.sort((a, b) => {
+      if (a[column] < b[column]) return newDirection ? -1 : 1;
+      if (a[column] > b[column]) return newDirection ? 1 : -1;
+      return 0;
+    }));
+  };
+
+const openModal = async (postId : any) => {
+  try {
+    // Substitua 'artista' e 'faixa' pelos valores apropriados
+    const response = await fetch(`/api/deezer/search?q=artist:"${postId.Artista}"%20track:"${postId.Titulo}"`, {
+      method: 'GET', // Método HTTP
+      headers: {
+        'Accept': 'application/json', // Informa ao servidor que o cliente espera JSON
+      }
+    });
+    if (response) {
+      
+      const data = await response.json();
+      console.log(data.data[0].link); // Imprime os dados recebidos para depuração
+      setCurrentLink(data.data[0].link.replace('www.deezer.com/track', 'widget.deezer.com/widget/auto/track'));
+      setCurrentPostId(postId);
+      setShowModal(true);
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
+    setLoading(false);
+  }
+}
+
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const getPages = () => {
     const pages = []
@@ -60,7 +109,7 @@ export default function Page() {
   useEffect(() => {
     const handleResize = () => {
       // Altura da linha (ajuste conforme necessário)
-      const rowHeight = 40;
+      const rowHeight = 50;
       // Altura disponível (ajuste conforme necessário)
       const availableHeight = window.innerHeight - 200;
       // Calcular o número de linhas
@@ -91,7 +140,7 @@ export default function Page() {
   return (
     <div className="container" style={{ backgroundColor: 'lightgray', color: 'black' }}>
       <header style={{ backgroundColor: 'black', textAlign: 'center', padding: '10px' }}>
-        <img src="/icons/icon.svg" width="70" height="" alt="Descrição da imagem" />
+        <img src="/icons/icon.svg" width="120" height="" alt="Descrição da imagem" />
       </header>
       <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
       {loading ? (
@@ -111,7 +160,7 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {Array(5).fill(0).map((_, index) => (
+              {Array(postsPerPage).fill(0).map((_, index) => (
                 <tr key={index}>
                   <td className="placeholder-glow">
                     <span className="placeholder col-6"></span>
@@ -126,26 +175,59 @@ export default function Page() {
               ))}
             </tbody>
           </table>
+          <nav>
+            <div className='d-flex justify-content-center'>
+              <ul className="pagination mx-auto">
+                <li className="page-item ">
+                  <a className="page-link" onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}>
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                {getPages().map((page: number, index: number) => (
+                  <li key={index} className={`page-item ${page === currentPage ? 'active' : ''}`}>
+                    <a className="page-link" onClick={() => setCurrentPage(page)}>{page}</a>
+                  </li>
+                ))}
+                <a className="page-link">?</a>
+
+                <li className="page-item">
+                  <a className="page-link" onClick={() => setCurrentPage(currentPage < Math.ceil(filteredPosts.length / postsPerPage) ? currentPage + 1 : currentPage)}>
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
         </div>
       ) : (
         <div className="table-responsive">
-          <table className="table" style={{ backgroundColor: 'gray', color: 'black', border: '1px solid black' }}>
+          <table className="table bootstrap-table" style={{ backgroundColor: 'gray', color: 'black', border: '1px solid black' }}>
             <thead style={{ backgroundColor: 'black', color: 'white' }}>
               <tr>
-                <th>ID</th>
-                <th>Titulo</th>
-                <th>Artista</th>
+                <th data-sortable="true" onClick={() => sortPosts('ID')}>ID</th>
+                <th data-sortable="true" onClick={() => sortPosts('Titulo')}>Titulo</th>
+                <th data-sortable="true" onClick={() => sortPosts('Artista')}>Artista</th>
               </tr>
             </thead>
             <tbody>
               {currentPosts.map((post: { ID: string; Titulo: string; Artista: string; }) => (
-                <tr key={post.ID}>
+                <tr key={post.ID} onClick={() => openModal({ID: post.ID, Titulo: post.Titulo, Artista: post.Artista})}>
                   <td>{post.ID}</td>
                   <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Titulo}>{post.Titulo}</td>
                   <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Artista}>{post.Artista}</td>
                 </tr>
               ))}
             </tbody>
+            <Modal show={showModal} onHide={closeModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>{currentPostId.ID} - { currentPostId.Titulo} - {currentPostId.Artista}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div style={{ width: '100%', height: '100%', backgroundColor: 'lightgray' }}>
+                <iframe title="deezer-widget" src={currentLink} width="100%" height="150" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write"></iframe>
+                </div>
+              </Modal.Body>
+            </Modal>
           </table>
           <nav>
             <div className='d-flex justify-content-center'>
@@ -168,8 +250,25 @@ export default function Page() {
               </ul>
             </div>
           </nav>
+
         </div>
-      )}
+      )}       <footer className="bg-dark text-white py-3">
+        <Container>
+          <Row>
+            <Col xs={6}>
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-white">
+                <FaInstagram size={24} />
+              </a>
+              <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="text-white ml-2">
+                <FaWhatsapp size={24} />
+              </a>
+            </Col>
+            <Col xs={6} className="text-end">
+              Direitos reservados AutoPyWeb
+            </Col>
+          </Row>
+        </Container>
+      </footer>
       <style jsx>{`
         .page-item.active .page-link {
           background-color: black;

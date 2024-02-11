@@ -21,8 +21,8 @@ export default async function handler(
   if (rows.length) {
     const musicList = rows.slice(1).map((row : any) => ({
       ID: row[0],
-      Artista: row[2],
-      Titulo: row[1],
+      Artista: row[1],
+      Titulo: row[2],
     }));
 
     res.status(200).json({ musicList });

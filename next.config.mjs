@@ -6,6 +6,14 @@ import {
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: '/api/deezer/:path*',
+        destination: 'https://api.deezer.com/:path*' // Proxy para o Backend
+      }
+    ]
+  }
 };
 
 const nextConfigFunction = async (phase) => {
