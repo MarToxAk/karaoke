@@ -23,7 +23,7 @@ export default function Page() {
     setSortColumn(column);
     setSortDirection(newDirection);
 
-    setFilteredPosts(filteredPosts.sort((a, b) => {
+    setFilteredPosts(filteredPosts.sort((a: any, b: any) => {
       if (a[column] < b[column]) return newDirection ? -1 : 1;
       if (a[column] > b[column]) return newDirection ? 1 : -1;
       return 0;
