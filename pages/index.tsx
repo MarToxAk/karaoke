@@ -30,29 +30,29 @@ export default function Page() {
     }));
   };
 
-const openModal = async (postId : any) => {
-  try {
-    // Substitua 'artista' e 'faixa' pelos valores apropriados
-    const response = await fetch(`/api/deezer/search?q=artist:"${postId.Artista}"%20track:"${postId.Titulo}"`, {
-      method: 'GET', // Método HTTP
-      headers: {
-        'Accept': 'application/json', // Informa ao servidor que o cliente espera JSON
+  const openModal = async (postId: any) => {
+    try {
+      // Substitua 'artista' e 'faixa' pelos valores apropriados
+      const response = await fetch(`/api/deezer/search?q=artist:"${postId.Artista}"%20track:"${postId.Titulo}"`, {
+        method: 'GET', // Método HTTP
+        headers: {
+          'Accept': 'application/json', // Informa ao servidor que o cliente espera JSON
+        }
+      });
+      if (response) {
+
+        const data = await response.json();
+        console.log(data.data[0].link); // Imprime os dados recebidos para depuração
+        setCurrentLink(data.data[0].link.replace('www.deezer.com/track', 'widget.deezer.com/widget/auto/track'));
+        setCurrentPostId(postId);
+        setShowModal(true);
       }
-    });
-    if (response) {
-      
-      const data = await response.json();
-      console.log(data.data[0].link); // Imprime os dados recebidos para depuração
-      setCurrentLink(data.data[0].link.replace('www.deezer.com/track', 'widget.deezer.com/widget/auto/track'));
-      setCurrentPostId(postId);
-      setShowModal(true);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.log(error)
-  } finally {
-    setLoading(false);
   }
-}
 
 
   const closeModal = () => {
@@ -211,7 +211,7 @@ const openModal = async (postId : any) => {
             </thead>
             <tbody>
               {currentPosts.map((post: { ID: string; Titulo: string; Artista: string; }) => (
-                <tr key={post.ID} onClick={() => openModal({ID: post.ID, Titulo: post.Titulo, Artista: post.Artista})}>
+                <tr key={post.ID} onClick={() => openModal({ ID: post.ID, Titulo: post.Titulo, Artista: post.Artista })}>
                   <td>{post.ID}</td>
                   <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Titulo}>{post.Titulo}</td>
                   <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Artista}>{post.Artista}</td>
@@ -220,11 +220,11 @@ const openModal = async (postId : any) => {
             </tbody>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
-                <Modal.Title>{currentPostId.ID} - { currentPostId.Titulo} - {currentPostId.Artista}</Modal.Title>
+                <Modal.Title>{currentPostId.ID} - {currentPostId.Titulo} - {currentPostId.Artista}</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <div style={{ width: '100%', height: '100%', backgroundColor: 'lightgray' }}>
-                <iframe title="deezer-widget" src={currentLink} width="100%" height="150" frameborder="0" allowtransparency="true" allow="encrypted-media; clipboard-write"></iframe>
+                  <iframe title="deezer-widget" src={currentLink} width="100%" height="150" frameBorder="0" allow="encrypted-media; clipboard-write"></iframe>
                 </div>
               </Modal.Body>
             </Modal>
