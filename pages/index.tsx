@@ -256,10 +256,10 @@ const openModal = async (postId : any) => {
         <Container>
           <Row>
             <Col xs={6}>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-white">
+              <a href="https://www.instagram.com/k.rezende59?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-white">
                 <FaInstagram size={24} />
               </a>
-              <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="text-white ml-2">
+              <a href="https://wa.me/+5512974067360" target="_blank" rel="noopener noreferrer" className="text-white ml-2">
                 <FaWhatsapp size={24} />
               </a>
             </Col>
