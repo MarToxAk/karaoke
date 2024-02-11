@@ -10,8 +10,8 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>Karaokê Ilhabela</title>
-        <meta name="description" content="Aplicativo Web de Karaokê" />
+        <title>Karaokê Rezende Ilhabela</title>
+        <meta name="description" content="Aplicativo Karaokê Rezende" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="mask-icon" href="/icons/icon.png" color="#FFFFFF" />
         <meta name="theme-color" content="#ffffff" />
@@ -33,16 +33,16 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="manifest" href="/manifest.json" />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:url" content="https://yourdomain.com" />
-        <meta name="twitter:title" content="Karaokê Ilhabela" />
-        <meta name="twitter:description" content="Aplicativo Web de Karaokê" />
+        <meta name="twitter:url" content="https://karaoke-weld.vercel.app/" />
+        <meta name="twitter:title" content="Karaokê Rezende" />
+        <meta name="twitter:description" content="Aplicativo Karaokê Rezende" />
         <meta name="twitter:image" content="/icons/twitter.png" />
         <meta name="twitter:creator" content="@DavidWShadow" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="My awesome PWA app" />
-        <meta property="og:description" content="Aplicativo Web de Karaokê" />
-        <meta property="og:site_name" content="Karaokê Ilhabela" />
-        <meta property="og:url" content="https://yourdomain.com" />
+        <meta property="og:title" content="Karaokê Rezende " />
+        <meta property="og:description" content="Aplicativo Karaokê Rezende" />
+        <meta property="og:site_name" content="Karaokê Rezende" />
+        <meta property="og:url" content="https://karaoke-weld.vercel.app/" />
         <meta property="og:image" content="/icons/icon.png" />
         {/* add the following only if you want to add a startup image for Apple devices. */}
         <link
