@@ -141,6 +141,7 @@ export default function Page() {
     <div className="container" style={{ backgroundColor: 'lightgray', color: 'black' }}>
       <header style={{ backgroundColor: 'black', textAlign: 'center', padding: '10px' }}>
         <img src="/icons/icon.svg" width="120" height="" alt="Descrição da imagem" />
+        <h5 style={{ color: 'white' }}>{posts.length}</h5>
       </header>
       <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
       {loading ? (
