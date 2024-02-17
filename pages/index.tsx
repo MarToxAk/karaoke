@@ -101,14 +101,27 @@ export default function Page() {
 
   useEffect(() => {
     setFilteredPosts(
-      posts.filter((post: { ID: string; Titulo: string; Artista: string; }) =>
-        post.ID.toLowerCase().includes(search.toLowerCase()) ||
+      posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
+        post.codigo.toLowerCase().includes(search.toLowerCase()) ||
         post.Titulo.toLowerCase().includes(search.toLowerCase()) ||
         post.Artista.toLowerCase().includes(search.toLowerCase()) ||
         setCurrentPage(1)
+
       )
+
     );
-    setPostsPerPage(posts.length);
+    currentPosts
+    const sizeProcura : any = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
+      post.codigo.toLowerCase().includes(search.toLowerCase()) ||
+      post.Titulo.toLowerCase().includes(search.toLowerCase()) ||
+      post.Artista.toLowerCase().includes(search.toLowerCase()) ||
+      setCurrentPage(1)
+
+    ).length
+
+    if(sizeProcura <= posts.length/100){
+      setPostsPerPage(sizeProcura)
+    }
 
   }, [search, posts]);
 
@@ -153,9 +166,12 @@ export default function Page() {
           <h6 style={{ color: 'white', fontSize: '10px' }}>{posts.length}</h6>
         </header>
 
-        <div style={{ paddingTop: '90px', paddingBottom: '70px' }} className="container" >
+        <div style={{ paddingTop: '90px' }} className="sticky-top">
+          <input type="text" className="form-control " value={search} onChange={e => searchSize(e)} placeholder="Buscar..." />
+        </div>
 
-          <input type="text" className="form-control" value={search} onChange={e => searchSize(e)} placeholder="Buscar..." />
+        <div style={{ paddingTop: '10px', paddingBottom: '70px' }} className="container" >
+
           {loading ? (
             <div className="table-responsive">
               <table className="table table-dark">
@@ -217,15 +233,15 @@ export default function Page() {
               <table className="table bootstrap-table" style={{ backgroundColor: 'gray', color: 'black', border: '1px solid black' }}>
                 <thead style={{ backgroundColor: 'black', color: 'white' }}>
                   <tr>
-                    <th data-sortable="true" onClick={() => sortPosts('ID')}>ID</th>
+                    <th data-sortable="true" onClick={() => sortPosts('codigo')}>codigo</th>
                     <th data-sortable="true" onClick={() => sortPosts('Titulo')}>Titulo</th>
                     <th data-sortable="true" onClick={() => sortPosts('Artista')}>Artista</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentPosts.map((post: { ID: string; Titulo: string; Artista: string; }) => (
-                    <tr key={post.ID} onClick={() => openModal({ ID: post.ID, Titulo: post.Titulo, Artista: post.Artista })}>
-                      <td>{post.ID}</td>
+                  {currentPosts.map((post: { ID: string, codigo: string; Titulo: string; Artista: string; }) => (
+                    <tr key={post.ID} onClick={() => openModal({ codigo: post.codigo, Titulo: post.Titulo, Artista: post.Artista })}>
+                      <td>{post.codigo}</td>
                       <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Titulo}>{post.Titulo}</td>
                       <td className="text-truncate" style={{ maxWidth: '150px' }} title={post.Artista}>{post.Artista}</td>
                     </tr>
@@ -233,7 +249,7 @@ export default function Page() {
                 </tbody>
                 <Modal show={showModal} onHide={closeModal}>
                   <Modal.Header closeButton>
-                    <Modal.Title>{currentPostId.ID} - {currentPostId.Titulo} - {currentPostId.Artista}</Modal.Title>
+                    <Modal.Title>{currentPostId.codigo} - {currentPostId.Titulo} - {currentPostId.Artista}</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <div style={{ width: '100%', height: '100%', backgroundColor: 'lightgray' }}>

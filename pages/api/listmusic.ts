@@ -1,8 +1,9 @@
 import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { v4 as uuidv4 } from 'uuid';
 
 type ResponseData = {
-  musicList: Array<{ID: string, Artista: string, Titulo: string}>
+  musicList: Array<{ID: string, codigo: string, Artista: string, Titulo: string}>
 }
 
 export default async function handler(
@@ -15,12 +16,11 @@ export default async function handler(
     range: 'Músicas', // Nome da sua aba
   });
 
-  
-
   const rows: any  = response.data.values;
   if (rows.length) {
     const musicList = rows.slice(1).map((row : any) => ({
-      ID: row[0],
+      ID: uuidv4(), // Gera um ID único
+      codigo: row[0], // Adiciona o valor original de row[0] para o campo "codigo"
       Artista: row[1],
       Titulo: row[2],
     }));
