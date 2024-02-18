@@ -24,6 +24,7 @@ export default function Page() {
     setSortDirection(newDirection);
 
     setFilteredPosts(filteredPosts.sort((a: any, b: any) => {
+
       if (a[column] < b[column]) return newDirection ? -1 : 1;
       if (a[column] > b[column]) return newDirection ? 1 : -1;
       return 0;
@@ -59,10 +60,6 @@ export default function Page() {
     setShowModal(false);
   };
 
-  const searchSize = (e: any) => {
-    setSearch(e.target.value)
-  };
-
   const getPages = () => {
     const pages = []
     const halfDisplayedPages = Math.floor(5 / 2)
@@ -80,6 +77,9 @@ export default function Page() {
     return pages
   }
 
+  function removeAccents(str: any) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
@@ -99,31 +99,38 @@ export default function Page() {
     fetchDataFromApi(); // Chame a função aqui
   }, []); // Adicione um array vazio como segundo argumento para evitar chamadas repetidas
 
+
+
   useEffect(() => {
-    setFilteredPosts(
-      posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
-        post.codigo.toLowerCase().includes(search.toLowerCase()) ||
-        post.Titulo.toLowerCase().includes(search.toLowerCase()) ||
-        post.Artista.toLowerCase().includes(search.toLowerCase()) ||
-        setCurrentPage(1)
 
-      )
-
+    const searchWithoutAccents = removeAccents(search.toLowerCase());
+    const filtered = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
+      removeAccents(post.codigo.toLowerCase()).includes(searchWithoutAccents) ||
+      removeAccents(post.Titulo.toLowerCase()).includes(searchWithoutAccents) ||
+      removeAccents(post.Artista.toLowerCase()).includes(searchWithoutAccents)
     );
-    currentPosts
-    const sizeProcura : any = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
-      post.codigo.toLowerCase().includes(search.toLowerCase()) ||
-      post.Titulo.toLowerCase().includes(search.toLowerCase()) ||
-      post.Artista.toLowerCase().includes(search.toLowerCase()) ||
-      setCurrentPage(1)
 
-    ).length
-
-    if(sizeProcura <= posts.length/100){
-      setPostsPerPage(sizeProcura)
+    setFilteredPosts(filtered.sort((a: any, b: any) => {
+      if (a['Titulo'] < b['Titulo']) return -1;
+      return 0;
+    }));
+    if (filtered.length < posts.length / 60) {
+      setPostsPerPage(filtered.length);
+    }
+    else {
+      // Altura da linha (ajuste conforme necessário)
+      const rowHeight = 50;
+      // Altura disponível (ajuste conforme necessário)
+      const availableHeight = window.innerHeight - 200;
+      // Calcular o número de linhas
+      const numberOfRows = Math.floor(availableHeight / rowHeight);
+      // Atualizar o estado
+      console.log(numberOfRows)
+      setPostsPerPage(numberOfRows)
     }
 
-  }, [search, posts]);
+    setCurrentPage(1);
+  }, [posts, search]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -135,7 +142,7 @@ export default function Page() {
       const numberOfRows = Math.floor(availableHeight / rowHeight);
       // Atualizar o estado
       console.log(numberOfRows)
-      setPostsPerPage(numberOfRows);
+      setPostsPerPage(numberOfRows)
     };
 
     // Lidar com o redimensionamento da janela
@@ -167,7 +174,7 @@ export default function Page() {
         </header>
 
         <div style={{ paddingTop: '90px' }} className="sticky-top">
-          <input type="text" className="form-control " value={search} onChange={e => searchSize(e)} placeholder="Buscar..." />
+          <input type="text" className="form-control " value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
         </div>
 
         <div style={{ paddingTop: '10px', paddingBottom: '70px' }} className="container" >
