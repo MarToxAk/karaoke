@@ -107,14 +107,16 @@ export default function Page() {
       removeAccents(post.codigo.toLowerCase()).includes(searchWithoutAccents) ||
       removeAccents(post.Titulo.toLowerCase()).includes(searchWithoutAccents) ||
       removeAccents(post.Artista.toLowerCase()).includes(searchWithoutAccents)
-    );
+    )
 
-    setFilteredPosts(filtered.sort((a: any, b: any) => {
-      if (a['Titulo'] < b['Titulo']) return -1;
-      return 0;
-    }));
     if (filtered.length < posts.length / 60) {
+      setFilteredPosts(filtered.sort((a: any, b: any) => {
+        if (a['Titulo'] < b['Titulo']) return -1;
+        return 0;
+      }));
       setPostsPerPage(filtered.length);
+      setCurrentPage(1);
+
     }
     else {
       // Altura da linha (ajuste conforme necessário)
@@ -125,9 +127,11 @@ export default function Page() {
       const numberOfRows = Math.floor(availableHeight / rowHeight);
       // Atualizar o estado
       setPostsPerPage(numberOfRows)
+      setFilteredPosts(filtered)
+      setCurrentPage(1);
+
     }
 
-    setCurrentPage(1);
   }, [posts, search]);
 
   useEffect(() => {
@@ -164,6 +168,7 @@ export default function Page() {
 
     <div className="container" style={{ backgroundColor: 'lightgray', color: 'black' }}>
       <main>
+        <SpeedInsights />
 
         <header className="fixed-top" style={{ backgroundColor: 'black', textAlign: 'center', padding: '10px' }}>
           <img src="/icons/icon.svg" width="80" height="" alt="Descrição da imagem" />

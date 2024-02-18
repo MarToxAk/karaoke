@@ -11,9 +11,28 @@ const nextConfig = {
       {
         source: '/api/deezer/:path*',
         destination: 'https://api.deezer.com/:path*' // Proxy para o Backend
-      }
+      },
+      {
+        source: '/service-worker.js',
+        destination: '/_next/static/service-worker.js',
+      },
     ]
-  }
+  },
+  workboxOpts: {
+    swDest: 'static/service-worker.js',
+    runtimeCaching: [
+      {
+        urlPattern: /^https?.*/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'offlineCache',
+          expiration: {
+            maxEntries: 200,
+          },
+        },
+      },
+    ],
+  },
 };
 
 const nextConfigFunction = async (phase) => {
