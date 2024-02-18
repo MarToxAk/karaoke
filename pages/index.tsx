@@ -100,36 +100,49 @@ export default function Page() {
   }, []); // Adicione um array vazio como segundo argumento para evitar chamadas repetidas
 
 
-
   useEffect(() => {
-    const searchWithoutAccents = removeAccents(search.toLowerCase());
-    const filtered = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
-      post.codigo.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents)) ||
-      post.Titulo.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents)) ||
-      post.Artista.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents))
-    )
-
-    if (filtered.length < posts.length / 60) {
-      setFilteredPosts(filtered.sort((a: any, b: any) => {
-        if (a['Titulo'] < b['Titulo']) return -1;
-        return 0;
-      }));
-      setPostsPerPage(filtered.length);
+    if (search === '') {
+      setFilteredPosts(posts);
+      setPostsPerPage(posts.length);
       setCurrentPage(1);
-    }
-    else {
-      // Altura da linha (ajuste conforme necessário)
-      const rowHeight = 50;
-      // Altura disponível (ajuste conforme necessário)
-      const availableHeight = window.innerHeight - 200;
-      // Calcular o número de linhas
-      const numberOfRows = Math.floor(availableHeight / rowHeight);
-      // Atualizar o estado
-      setPostsPerPage(numberOfRows)
-      setFilteredPosts(filtered)
-      setCurrentPage(1);
+    } else {
+      const searchWithoutAccents = removeAccents(search.toLowerCase());
+      const filtered = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) => {
+        const postValues = [post.codigo, post.Titulo, post.Artista].map(value => removeAccents(value.toLowerCase()));
+        return postValues.some(value => {
+          const words = value.split(' ');
+          if (words.length > 1) {
+            return value.includes(searchWithoutAccents);
+          } else {
+            return value.startsWith(searchWithoutAccents);
+          }
+        });
+      });
+  
+      if (filtered.length < posts.length / 60) {
+        setFilteredPosts(filtered.sort((a: any, b: any) => {
+          if (a['Titulo'] < b['Titulo']) return -1;
+          return 0;
+        }));
+        setPostsPerPage(filtered.length);
+        setCurrentPage(1);
+      } else {
+        // Altura da linha (ajuste conforme necessário)
+        const rowHeight = 50;
+        // Altura disponível (ajuste conforme necessário)
+        const availableHeight = window.innerHeight - 200;
+        // Calcular o número de linhas
+        const numberOfRows = Math.floor(availableHeight / rowHeight);
+        // Atualizar o estado
+        setPostsPerPage(numberOfRows)
+        setFilteredPosts(filtered)
+        setCurrentPage(1);
+      }
     }
   }, [posts, search]);
+  
+  
+
 
 
 
