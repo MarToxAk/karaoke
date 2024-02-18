@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function Page() {
   const [posts, setPosts]: any = useState([]);
@@ -43,7 +44,6 @@ export default function Page() {
       if (response) {
 
         const data = await response.json();
-        console.log(data.data[0].link); // Imprime os dados recebidos para depuração
         setCurrentLink(data.data[0].link.replace('www.deezer.com/track', 'widget.deezer.com/widget/auto/track'));
         setCurrentPostId(postId);
         setShowModal(true);
@@ -86,7 +86,6 @@ export default function Page() {
         const response = await fetch('/api/listmusic')
         if (response) {
           const data = await response.json()
-          console.log(data.musicList)
           setPosts(data.musicList)
         }
       } catch (error) {
@@ -125,7 +124,6 @@ export default function Page() {
       // Calcular o número de linhas
       const numberOfRows = Math.floor(availableHeight / rowHeight);
       // Atualizar o estado
-      console.log(numberOfRows)
       setPostsPerPage(numberOfRows)
     }
 
@@ -141,7 +139,6 @@ export default function Page() {
       // Calcular o número de linhas
       const numberOfRows = Math.floor(availableHeight / rowHeight);
       // Atualizar o estado
-      console.log(numberOfRows)
       setPostsPerPage(numberOfRows)
     };
 
