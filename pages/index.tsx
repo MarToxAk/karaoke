@@ -178,9 +178,13 @@ export default function Page() {
           <h6 style={{ color: 'white', fontSize: '10px' }}>{posts.length}</h6>
         </header>
 
-        <div style={{ paddingTop: '90px' }} className="sticky-top">
-          <input type="text" className="form-control " value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
+        <div style={{ paddingTop: '90px' }} className="sticky-top d-flex justify-content-between">
+          <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
+          <span style={{ color: 'black', fontSize: '20px' }} className="badge badge-secondary ml-3 align-self-center">{filteredPosts.length}</span>
         </div>
+
+
+
 
         <div style={{ paddingTop: '10px', paddingBottom: '70px' }} className="container" >
 
