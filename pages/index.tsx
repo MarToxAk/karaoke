@@ -17,7 +17,7 @@ export default function Page() {
   const [showModal, setShowModal] = useState(false);
   const [currentPostId, setCurrentPostId]: any = useState([]);
   const [currentLink, setCurrentLink]: any = useState(null);
-
+  const [hasResized, setHasResized] = useState(false);
 
   const sortPosts = (column: any) => {
     const newDirection = column === sortColumn ? !sortDirection : true;
@@ -134,25 +134,30 @@ export default function Page() {
 
   }, [posts, search]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      // Altura da linha (ajuste conforme necessário)
-      const rowHeight = 50;
-      // Altura disponível (ajuste conforme necessário)
-      const availableHeight = window.innerHeight - 200;
-      // Calcular o número de linhas
-      const numberOfRows = Math.floor(availableHeight / rowHeight);
-      // Atualizar o estado
-      setPostsPerPage(numberOfRows)
-    };
 
-    // Lidar com o redimensionamento da janela
-    window.addEventListener('resize', handleResize);
-    handleResize();
 
-    // Limpar o evento ao desmontar
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    useEffect(() => {
+      if (!hasResized) {
+        const handleResize = () => {
+          // Sua lógica aqui
+          // Altura da linha (ajuste conforme necessário)
+        const rowHeight = 50;
+        // Altura disponível (ajuste conforme necessário)
+        const availableHeight = window.innerHeight - 200;
+        // Calcular o número de linhas
+        const numberOfRows = Math.floor(availableHeight / rowHeight);
+        // Atualizar o estado
+        setPostsPerPage(numberOfRows)
+        };
+    
+        window.addEventListener('resize', handleResize);
+        handleResize();
+    
+        setHasResized(true);
+    
+        return () => window.removeEventListener('resize', handleResize);
+      }
+    }, [hasResized]);
 
   // Obter posts atuais
   const indexOfLastPost = currentPage * postsPerPage;
