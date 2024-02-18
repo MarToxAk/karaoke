@@ -102,12 +102,11 @@ export default function Page() {
 
 
   useEffect(() => {
-
     const searchWithoutAccents = removeAccents(search.toLowerCase());
     const filtered = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) =>
-      removeAccents(post.codigo.toLowerCase()).includes(searchWithoutAccents) ||
-      removeAccents(post.Titulo.toLowerCase()).includes(searchWithoutAccents) ||
-      removeAccents(post.Artista.toLowerCase()).includes(searchWithoutAccents)
+      post.codigo.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents)) ||
+      post.Titulo.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents)) ||
+      post.Artista.split(' ').some(word => removeAccents(word.toLowerCase()).startsWith(searchWithoutAccents))
     )
 
     if (filtered.length < posts.length / 60) {
@@ -117,7 +116,6 @@ export default function Page() {
       }));
       setPostsPerPage(filtered.length);
       setCurrentPage(1);
-
     }
     else {
       // Altura da linha (ajuste conforme necessário)
@@ -130,10 +128,9 @@ export default function Page() {
       setPostsPerPage(numberOfRows)
       setFilteredPosts(filtered)
       setCurrentPage(1);
-
     }
-
   }, [posts, search]);
+
 
 
   useEffect(() => {
@@ -141,20 +138,20 @@ export default function Page() {
       const handleResize = () => {
         // Sua lógica aqui
         // Altura da linha (ajuste conforme necessário)
-      const rowHeight = 50;
-      // Altura disponível (ajuste conforme necessário)
-      const availableHeight = window.innerHeight - 200;
-      // Calcular o número de linhas
-      const numberOfRows = Math.floor(availableHeight / rowHeight);
-      // Atualizar o estado
-      setPostsPerPage(numberOfRows)
+        const rowHeight = 50;
+        // Altura disponível (ajuste conforme necessário)
+        const availableHeight = window.innerHeight - 200;
+        // Calcular o número de linhas
+        const numberOfRows = Math.floor(availableHeight / rowHeight);
+        // Atualizar o estado
+        setPostsPerPage(numberOfRows)
       };
-  
+
       window.addEventListener('resize', handleResize);
       handleResize();
-  
+
       setHasResized(true);
-  
+
       return () => window.removeEventListener('resize', handleResize);
     }
   }, [hasResized]);
