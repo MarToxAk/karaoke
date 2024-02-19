@@ -3,8 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { useRouter } from 'next/router'
 
 export default function Page() {
+  const router = useRouter()
+  const { buscar } = router.query
   const [posts, setPosts]: any = useState([]);
   const [search, setSearch]: any = useState('');
   const [loading, setLoading]: any = useState(true);
@@ -81,6 +84,17 @@ export default function Page() {
   function removeAccents(str: any) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
+
+  useEffect(() => {
+    if(buscar){
+      console.log(buscar)
+      setSearch(buscar)
+    }
+    else {
+      console.log('nada')
+    }
+  }, [buscar])
+
   useEffect(() => {
     const fetchDataFromApi = async () => {
       try {
@@ -103,7 +117,6 @@ export default function Page() {
   useEffect(() => {
     if (search === '') {
       setFilteredPosts(posts);
-      setPostsPerPage(posts.length);
       setCurrentPage(1);
     } else {
       const searchWithoutAccents = removeAccents(search.toLowerCase());
