@@ -13,7 +13,7 @@ export default async function handler(
   const sheets = google.sheets({ version: 'v4', auth: 'AIzaSyAtgmQ8aTQgn-qG2hIUqZak5evU6V3FXME' });
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: '1aw0lt03AJCUsYLEej6_F417k0zoZwvRTjoqbrJ0KMGk',
-    range: 'Músicas', // Nome da sua aba
+    range: 'Página27', // Nome da sua aba
   });
 
   const rows: any  = response.data.values;
