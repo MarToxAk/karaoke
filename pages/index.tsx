@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Col, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Modal, Form } from 'react-bootstrap';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { useRouter } from 'next/router'
@@ -21,7 +21,10 @@ export default function Page() {
   const [currentPostId, setCurrentPostId]: any = useState([]);
   const [currentLink, setCurrentLink]: any = useState(null);
   const [hasResized, setHasResized] = useState(false);
-
+  const [searchByAuthor, setSearchByAuthor] = useState(false);
+  const [searchByTitle, setSearchByTitle] = useState(false);
+  const [searchByCode, setSearchByCode] = useState(false);
+  const [searchBy, setSearchBy] = useState('all');
 
   const sortPosts = (column: any) => {
     const newDirection = column === sortColumn ? !sortDirection : true;
@@ -86,7 +89,7 @@ export default function Page() {
   }
 
   useEffect(() => {
-    if(buscar){
+    if (buscar) {
       console.log(buscar)
       setSearch(buscar)
     }
@@ -118,20 +121,28 @@ export default function Page() {
     if (search === '') {
       setFilteredPosts(posts);
       setCurrentPage(1);
-    } else {
+    }
+    else {
       const searchWithoutAccents = removeAccents(search.toLowerCase());
       const filtered = posts.filter((post: { codigo: string; Titulo: string; Artista: string; }) => {
-        const postValues = [post.codigo, post.Titulo, post.Artista].map(value => removeAccents(value.toLowerCase()));
-        return postValues.some(value => {
-          const words = value.split(' ');
-          if (words.length > 1) {
-            return value.includes(searchWithoutAccents);
-          } else {
-            return value.startsWith(searchWithoutAccents);
-          }
-        });
+        const postValues = [];
+        switch (searchBy) {
+          case 'author':
+            postValues.push(post.Artista);
+            break;
+          case 'title':
+            postValues.push(post.Titulo);
+            break;
+          case 'code':
+            postValues.push(post.codigo);
+            break;
+          default:
+            postValues.push(post.codigo, post.Titulo, post.Artista);
+            break;
+        }
+        return postValues.map(value => removeAccents(value.toLowerCase())).some(value => value.includes(searchWithoutAccents));
       });
-  
+
       if (filtered.length < posts.length / 60) {
         setFilteredPosts(filtered.sort((a: any, b: any) => {
           if (a['Titulo'] < b['Titulo']) return -1;
@@ -152,9 +163,9 @@ export default function Page() {
         setCurrentPage(1);
       }
     }
-  }, [posts, search]);
-  
-  
+  }, [posts, search, searchBy]);
+
+
 
 
 
@@ -164,7 +175,7 @@ export default function Page() {
       const handleResize = () => {
         // Sua lógica aqui
         // Altura da linha (ajuste conforme necessário)
-        const rowHeight = 50;
+        const rowHeight = 55;
         // Altura disponível (ajuste conforme necessário)
         const availableHeight = window.innerHeight - 200;
         // Calcular o número de linhas
@@ -204,15 +215,12 @@ export default function Page() {
           <h6 style={{ color: 'white', fontSize: '10px' }}>{posts.length}</h6>
         </header>
 
-        <div style={{ paddingTop: '90px' }} className="sticky-top d-flex justify-content-between">
-          <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
-          <span style={{ color: 'black', fontSize: '20px' }} className="badge badge-secondary ml-3 align-self-center">{filteredPosts.length}</span>
-        </div>
 
 
 
 
-        <div style={{ paddingTop: '10px', paddingBottom: '70px' }} className="container" >
+
+        <div style={{ paddingTop: '90px'  }} className="container mb-5" >
 
           {loading ? (
             <div className="table-responsive">
@@ -301,7 +309,7 @@ export default function Page() {
                 </Modal>
               </table>
               <nav>
-                <div className='d-flex justify-content-center'>
+                <div style={{ paddingBottom: '5px'  }} className='d-flex justify-content-center'>
                   <ul className="pagination mx-auto">
                     <li className="page-item ">
                       <a className="page-link" onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : currentPage)}>
@@ -324,8 +332,23 @@ export default function Page() {
 
             </div>
           )}
+
         </div>
+
+
         <footer className="fixed-bottom bg-dark text-white py-3">
+          <div className="sticky-top d-flex flex-column align-items-center">
+            <Form.Group controlId="formBasicCheckbox" className="d-flex justify-content-center">
+              <Form.Check inline label="Todos" type="radio" id="all-checkbox" checked={searchBy === 'all'} onChange={() => setSearchBy('all')} />
+              <Form.Check inline label="Autor" type="radio" id="author-checkbox" checked={searchBy === 'author'} onChange={() => setSearchBy('author')} />
+              <Form.Check inline label="Titulo" type="radio" id="title-checkbox" checked={searchBy === 'title'} onChange={() => setSearchBy('title')} />
+              <Form.Check inline label="Codigo" type="radio" id="code-checkbox" checked={searchBy === 'code'} onChange={() => setSearchBy('code')} />
+            </Form.Group>
+            <div className="d-flex justify-content-between w-100">
+              <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar..." />
+              <span style={{ color: 'white', fontSize: '20px' }} className="badge badge-secondary ml-3 align-self-center">{filteredPosts.length}</span>
+            </div>
+          </div>
           <Container>
             <Row>
               <Col xs={6}>
