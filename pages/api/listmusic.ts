@@ -13,10 +13,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  const sheets = google.sheets({ version: 'v4', auth: 'AIzaSyAtgmQ8aTQgn-qG2hIUqZak5evU6V3FXME' });
+  const sheets = google.sheets({ version: 'v4', auth: process.env.GOOGLE_KEY });
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: process.env.GOOGLE_KEY,
-    range: 'Página27', // Nome da sua aba
+    spreadsheetId: process.env.GOOGLE_SHEETS_ID,
+    range: 'Musicas {1}', // Nome da sua aba
   });
 
   const rows: any  = response.data.values;
