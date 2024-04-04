@@ -23,9 +23,9 @@ export default async function handler(
   if (rows.length) {
     const musicList = rows.slice(1).map((row : any) => ({
       ID: uuidv4(), // Gera um ID único
-      codigo: row[4], // Adiciona o valor original de row[0] para o campo "codigo"
-      Artista: row[2],
-      Titulo: row[3],
+      codigo: row[1], // Adiciona o valor original de row[0] para o campo "codigo"
+      Artista: row[0],
+      Titulo: row[4],
     }));
 
     res.status(200).json({ musicList });
